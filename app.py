@@ -1,5 +1,5 @@
 """
-Aplicación principal Flask para Mi Hoja de Ruta
+Aplicación principal Flask para ItinerAR
 """
 from app import create_app
 
