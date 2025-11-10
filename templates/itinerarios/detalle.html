@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+{% block title %}{{ itinerario.titulo }} - Mi Hoja de Ruta{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h1 class="display-5">{{ itinerario.titulo }}</h1>
+                {% if itinerario.descripcion %}
+                    <p class="lead text-muted">{{ itinerario.descripcion }}</p>
+                {% endif %}
+            </div>
+            <div>
+                {% if itinerario.esPrivado == 1 %}
+                    <span class="badge bg-secondary fs-6">Privado</span>
+                {% else %}
+                    <span class="badge bg-success fs-6">Público</span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="mt-3">
+            {% if itinerario.fechaInicio or itinerario.fechaFin %}
+                <p class="mb-2">
+                    <i class="bi bi-calendar"></i> 
+                    <strong>Fechas:</strong>
+                    {% if itinerario.fechaInicio and itinerario.fechaFin %}
+                        {{ itinerario.fechaInicio }} - {{ itinerario.fechaFin }}
+                    {% elif itinerario.fechaInicio %}
+                        Desde: {{ itinerario.fechaInicio }}
+                    {% elif itinerario.fechaFin %}
+                        Hasta: {{ itinerario.fechaFin }}
+                    {% endif %}
+                </p>
+            {% endif %}
+            
+            <p class="mb-2">
+                <i class="bi bi-person"></i> 
+                <strong>Creado por:</strong> {{ usuario_creador.nombre }} {{ usuario_creador.apellido or '' }}
+            </p>
+            
+            <p class="mb-2">
+                <i class="bi bi-list-ul"></i> 
+                <strong>Etapas:</strong> {{ itinerario.etapas|length }}
+            </p>
+        </div>
+        
+        {% if current_user.is_authenticated and (itinerario.idUsuario == current_user.idUsuario or current_user.es_administrador()) %}
+        <div class="mt-3">
+            <a href="{{ url_for('itinerarios.editar', id=itinerario.idItinerario) }}" class="btn btn-outline-secondary">
+                <i class="bi bi-pencil"></i> Editar Itinerario
+            </a>
+            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalEliminar">
+                <i class="bi bi-trash"></i> Eliminar Itinerario
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <h2 class="h4 mb-3">Etapas del Itinerario</h2>
+        
+        {% if current_user.is_authenticated %}
+            {% set puede_modificar = (itinerario.idUsuario == current_user.idUsuario) or current_user.es_administrador() %}
+        {% else %}
+            {% set puede_modificar = False %}
+        {% endif %}
+        {% if puede_modificar %}
+        <div class="mb-3">
+            <a href="{{ url_for('etapas.crear', itinerario_id=itinerario.idItinerario) }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Agregar Etapa
+            </a>
+        </div>
+        {% endif %}
+        
+        {% if itinerario.etapas %}
+            <div class="list-group">
+                {% for etapa in etapas_ordenadas %}
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-1">
+                                    {% if etapa.fechaInicio %}
+                                        <i class="bi bi-calendar-event"></i> {{ etapa.fechaInicio }}
+                                    {% else %}
+                                        <i class="bi bi-list-ol"></i> Etapa {{ loop.index }}
+                                    {% endif %}
+                                </h5>
+                                <div>
+                                    {% if etapa.ciudad %}
+                                        <span class="badge bg-info me-2">
+                                            <i class="bi bi-geo-alt"></i> {{ etapa.ciudad.nombre }}, {{ etapa.ciudad.provincia.nombre }}
+                                        </span>
+                                    {% endif %}
+                                    {% if etapa.lugar_interes %}
+                                        <span class="badge bg-success me-2">
+                                            <i class="bi bi-star"></i> {{ etapa.lugar_interes.nombre }} ({{ etapa.lugar_interes.categoria }})
+                                        </span>
+                                    {% endif %}
+                                    {% if etapa.fechaFin %}
+                                        <span class="badge bg-secondary">
+                                            <i class="bi bi-calendar-check"></i> Hasta: {{ etapa.fechaFin }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <p class="mb-2">{{ etapa.actividadDelDia }}</p>
+                            {% if etapa.notaPersonal %}
+                                <div class="alert alert-light py-2 mb-0">
+                                    <i class="bi bi-sticky"></i> <strong>Nota:</strong> {{ etapa.notaPersonal }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% if puede_modificar %}
+                        <div class="btn-group-vertical ms-3" role="group">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" 
+                                    onclick="moverEtapa({{ itinerario.idItinerario }}, {{ etapa.idEtapa }}, 'subir')"
+                                    {% if loop.first %}disabled{% endif %}>
+                                <i class="bi bi-arrow-up"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" 
+                                    onclick="moverEtapa({{ itinerario.idItinerario }}, {{ etapa.idEtapa }}, 'bajar')"
+                                    {% if loop.last %}disabled{% endif %}>
+                                <i class="bi bi-arrow-down"></i>
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% if puede_modificar %}
+                    <div class="mt-2">
+                        <a href="{{ url_for('etapas.editar', itinerario_id=itinerario.idItinerario, etapa_id=etapa.idEtapa) }}" 
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil"></i> Editar
+                        </a>
+                        <button type="button" class="btn btn-sm btn-outline-danger" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#modalEliminarEtapa{{ etapa.idEtapa }}">
+                            <i class="bi bi-trash"></i> Eliminar
+                        </button>
+                    </div>
+                    
+                    <!-- Modal de confirmación para eliminar etapa -->
+                    <div class="modal fade" id="modalEliminarEtapa{{ etapa.idEtapa }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Confirmar Eliminación</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>¿Estás seguro de que deseas eliminar esta etapa?</p>
+                                    <p class="text-muted"><small>{{ etapa.actividadDelDia[:100] }}{% if etapa.actividadDelDia|length > 100 %}...{% endif %}</small></p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <form method="POST" action="{{ url_for('etapas.eliminar', itinerario_id=itinerario.idItinerario, etapa_id=etapa.idEtapa) }}" class="d-inline">
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="bi bi-trash"></i> Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Este itinerario aún no tiene etapas.
+                {% if puede_modificar %}
+                    <a href="{{ url_for('etapas.crear', itinerario_id=itinerario.idItinerario) }}" class="alert-link">Agrega la primera etapa</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal de confirmación para eliminar -->
+{% if current_user.is_authenticated and (itinerario.idUsuario == current_user.idUsuario or current_user.es_administrador()) %}
+<div class="modal fade" id="modalEliminar" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar el itinerario <strong>"{{ itinerario.titulo }}"</strong>?</p>
+                <p class="text-danger"><small>Esta acción no se puede deshacer. Se eliminarán todas las etapas asociadas.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form method="POST" action="{{ url_for('itinerarios.eliminar', id=itinerario.idItinerario) }}" class="d-inline">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function moverEtapa(itinerarioId, etapaId, direccion) {
+    const url = `/itinerarios/${itinerarioId}/etapas/${etapaId}/${direccion}`;
+    
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.message || 'Error al mover la etapa');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al mover la etapa');
+    });
+}
+</script>
+{% endblock %}
+

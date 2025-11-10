@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Mi Hoja de Ruta{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="jumbotron bg-primary text-white p-5 rounded mb-4">
+            <h1 class="display-4">Bienvenido a Mi Hoja de Ruta</h1>
+            <p class="lead">Planifica tus viajes por Argentina de manera colaborativa</p>
+            <hr class="my-4 bg-white">
+            <p>Crea itinerarios, organiza tus etapas y descubre lugares de interés en todo el país.</p>
+            {% if not current_user.is_authenticated %}
+                <a class="btn btn-light btn-lg me-2" href="{{ url_for('itinerarios.listar') }}" role="button">Ver Itinerarios</a>
+                <a class="btn btn-outline-light btn-lg" href="{{ url_for('auth.login') }}" role="button">Iniciar Sesión</a>
+            {% else %}
+                {% if current_user.es_planificador() %}
+                    <a class="btn btn-light btn-lg" href="{{ url_for('itinerarios.mis_itinerarios') }}" role="button">Mis Itinerarios</a>
+                {% else %}
+                    <a class="btn btn-light btn-lg" href="{{ url_for('itinerarios.listar') }}" role="button">Ver Itinerarios</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-map"></i> Itinerarios</h5>
+                <p class="card-text">Crea y gestiona tus propios itinerarios de viaje por Argentina.</p>
+                <a href="{{ url_for('itinerarios.listar') }}" class="btn btn-primary">Ver Itinerarios</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-graph-up"></i> Panel de Datos</h5>
+                <p class="card-text">Explora gráficos informativos sobre turismo en Argentina.</p>
+                <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary">Ver Panel</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-geo-alt"></i> Lugares de Interés</h5>
+                <p class="card-text">Descubre parques nacionales, alojamientos y eventos.</p>
+                <a href="{{ url_for('lugares.index') }}" class="btn btn-primary">Explorar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

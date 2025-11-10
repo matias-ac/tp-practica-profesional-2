@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}{% if modo == 'crear' %}Crear{% else %}Editar{% endif %} Itinerario - Mi Hoja de Ruta{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-md-8 offset-md-2">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">
+                    <i class="bi bi-{% if modo == 'crear' %}plus-circle{% else %}pencil{% endif %}"></i>
+                    {% if modo == 'crear' %}Crear Nuevo Itinerario{% else %}Editar Itinerario{% endif %}
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="titulo" class="form-label">Título <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="titulo" name="titulo" 
+                               value="{% if itinerario %}{{ itinerario.titulo }}{% endif %}" 
+                               required maxlength="200" placeholder="Ej: Norte Argentino en 10 días">
+                        <div class="form-text">Un título descriptivo para tu itinerario (máximo 200 caracteres)</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="4" 
+                                  placeholder="Describe tu itinerario...">{% if itinerario %}{{ itinerario.descripcion or '' }}{% endif %}</textarea>
+                        <div class="form-text">Opcional: agrega una descripción detallada</div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fechaInicio" class="form-label">Fecha de Inicio</label>
+                            <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" 
+                                   value="{% if itinerario and itinerario.fechaInicio %}{{ itinerario.fechaInicio }}{% endif %}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="fechaFin" class="form-label">Fecha de Fin</label>
+                            <input type="date" class="form-control" id="fechaFin" name="fechaFin" 
+                                   value="{% if itinerario and itinerario.fechaFin %}{{ itinerario.fechaFin }}{% endif %}">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Visibilidad</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="esPrivado" id="publico" value="0" 
+                                   {% if not itinerario or itinerario.esPrivado == 0 %}checked{% endif %}>
+                            <label class="form-check-label" for="publico">
+                                <i class="bi bi-globe"></i> Público - Visible para todos los usuarios
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="esPrivado" id="privado" value="1" 
+                                   {% if itinerario and itinerario.esPrivado == 1 %}checked{% endif %}>
+                            <label class="form-check-label" for="privado">
+                                <i class="bi bi-lock"></i> Privado - Solo visible para ti
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% if modo == 'editar' %}{{ url_for('itinerarios.mis_itinerarios') }}{% else %}{{ url_for('itinerarios.listar') }}{% endif %}" 
+                           class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> {% if modo == 'crear' %}Crear{% else %}Guardar Cambios{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

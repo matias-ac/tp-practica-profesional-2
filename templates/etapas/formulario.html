@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}{% if modo == 'crear' %}Agregar{% else %}Editar{% endif %} Etapa - Mi Hoja de Ruta{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-md-8 offset-md-2">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">
+                    <i class="bi bi-{% if modo == 'crear' %}plus-circle{% else %}pencil{% endif %}"></i>
+                    {% if modo == 'crear' %}Agregar Nueva Etapa{% else %}Editar Etapa{% endif %}
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <p class="text-muted">
+                        <i class="bi bi-info-circle"></i> 
+                        Itinerario: <strong>{{ itinerario.titulo }}</strong>
+                    </p>
+                </div>
+                
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="actividadDelDia" class="form-label">
+                            Actividad del Día <span class="text-danger">*</span>
+                        </label>
+                        <textarea class="form-control" id="actividadDelDia" name="actividadDelDia" rows="4" 
+                                  required placeholder="Ej: Llegada a Salta. Check-in en hotel y recorrido por el centro histórico.">{% if etapa %}{{ etapa.actividadDelDia }}{% endif %}</textarea>
+                        <div class="form-text">Describe las actividades y planes para este día</div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="provincia" class="form-label">Provincia</label>
+                            <select class="form-select" id="provincia" name="provincia" onchange="cargarCiudades(); cargarLugaresInteres();">
+                                <option value="">Selecciona una provincia</option>
+                                {% for provincia in provincias %}
+                                    <option value="{{ provincia.idProvincia }}" 
+                                            {% if etapa and etapa.ciudad and etapa.ciudad.idProvincia == provincia.idProvincia %}selected{% endif %}
+                                            {% if etapa and etapa.lugar_interes and etapa.lugar_interes.idProvincia == provincia.idProvincia %}selected{% endif %}>
+                                        {{ provincia.nombre }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="idCiudad" class="form-label">Ciudad</label>
+                            <select class="form-select" id="idCiudad" name="idCiudad">
+                                <option value="">Selecciona una ciudad</option>
+                                {% if etapa and etapa.ciudad %}
+                                    <option value="{{ etapa.ciudad.idCiudad }}" selected>
+                                        {{ etapa.ciudad.nombre }}
+                                    </option>
+                                {% endif %}
+                            </select>
+                            <div class="form-text">Opcional</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="idLugarInteres" class="form-label">Lugar de Interés</label>
+                            <select class="form-select" id="idLugarInteres" name="idLugarInteres">
+                                <option value="">Selecciona un lugar</option>
+                                {% if etapa and etapa.lugar_interes %}
+                                    <option value="{{ etapa.lugar_interes.idLugarInteres }}" selected>
+                                        {{ etapa.lugar_interes.nombre }} ({{ etapa.lugar_interes.categoria }})
+                                    </option>
+                                {% endif %}
+                            </select>
+                            <div class="form-text">Opcional: parques, alojamientos, eventos</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fechaInicio" class="form-label">Fecha de Inicio</label>
+                            <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" 
+                                   value="{% if etapa and etapa.fechaInicio %}{{ etapa.fechaInicio }}{% endif %}">
+                            <div class="form-text">Opcional: fecha de inicio de esta etapa</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="fechaFin" class="form-label">Fecha de Fin</label>
+                            <input type="date" class="form-control" id="fechaFin" name="fechaFin" 
+                                   value="{% if etapa and etapa.fechaFin %}{{ etapa.fechaFin }}{% endif %}">
+                            <div class="form-text">Opcional: fecha de fin de esta etapa</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="notaPersonal" class="form-label">Nota Personal</label>
+                        <textarea class="form-control" id="notaPersonal" name="notaPersonal" rows="3" 
+                                  placeholder="Ej: Llevar protector solar y sombrero">{% if etapa %}{{ etapa.notaPersonal or '' }}{% endif %}</textarea>
+                        <div class="form-text">Opcional: notas personales para esta etapa</div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('itinerarios.detalle', id=itinerario.idItinerario) }}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> {% if modo == 'crear' %}Crear Etapa{% else %}Guardar Cambios{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Datos de ciudades por provincia (se cargarán dinámicamente)
+const ciudadesPorProvincia = {
+    {% for provincia in provincias %}
+    {{ provincia.idProvincia }}: [
+        {% for ciudad in provincia.ciudades %}
+        {id: {{ ciudad.idCiudad }}, nombre: "{{ ciudad.nombre }}"}{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ]{% if not loop.last %},{% endif %}
+    {% endfor %}
+};
+
+function cargarCiudades() {
+    const provinciaSelect = document.getElementById('provincia');
+    const ciudadSelect = document.getElementById('idCiudad');
+    const provinciaId = provinciaSelect.value;
+    
+    // Limpiar opciones actuales
+    ciudadSelect.innerHTML = '<option value="">Selecciona una ciudad</option>';
+    
+    if (provinciaId && ciudadesPorProvincia[provinciaId]) {
+        ciudadesPorProvincia[provinciaId].forEach(ciudad => {
+            const option = document.createElement('option');
+            option.value = ciudad.id;
+            option.textContent = ciudad.nombre;
+            ciudadSelect.appendChild(option);
+        });
+    }
+}
+
+function cargarLugaresInteres() {
+    const provinciaSelect = document.getElementById('provincia');
+    const lugarSelect = document.getElementById('idLugarInteres');
+    const provinciaId = provinciaSelect.value;
+    
+    // Limpiar opciones actuales
+    lugarSelect.innerHTML = '<option value="">Selecciona un lugar</option>';
+    
+    if (provinciaId) {
+        // Cargar lugares de interés desde la API
+        fetch(`/lugares/api/por-provincia/${provinciaId}`)
+            .then(response => response.json())
+            .then(data => {
+                data.lugares.forEach(lugar => {
+                    const option = document.createElement('option');
+                    option.value = lugar.id;
+                    option.textContent = `${lugar.nombre} (${lugar.categoria})`;
+                    lugarSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error al cargar lugares de interés:', error);
+            });
+    }
+}
+
+// Si hay una ciudad o lugar seleccionado al cargar (modo editar), cargar los datos
+{% if etapa %}
+document.addEventListener('DOMContentLoaded', function() {
+    const provinciaSelect = document.getElementById('provincia');
+    if (provinciaSelect.value) {
+        cargarCiudades();
+        cargarLugaresInteres();
+        
+        // Seleccionar la ciudad actual
+        {% if etapa.ciudad %}
+        setTimeout(() => {
+            document.getElementById('idCiudad').value = {{ etapa.ciudad.idCiudad }};
+        }, 100);
+        {% endif %}
+        
+        // Seleccionar el lugar de interés actual
+        {% if etapa.lugar_interes %}
+        setTimeout(() => {
+            document.getElementById('idLugarInteres').value = {{ etapa.lugar_interes.idLugarInteres }};
+        }, 200);
+        {% endif %}
+    }
+});
+{% endif %}
+</script>
+{% endblock %}
+

@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Iniciar Sesión - Mi Hoja de Ruta{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+                <h3 class="card-title mb-0">
+                    <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               required autofocus placeholder="tu.email@ejemplo.com"
+                               value="{{ request.form.email if request.form else '' }}">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   required placeholder="Ingresa tu contraseña">
+                            <button class="btn btn-outline-secondary" type="button" 
+                                    onclick="togglePassword()">
+                                <i class="bi bi-eye" id="toggleIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                        </button>
+                    </div>
+                </form>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <p class="text-muted mb-0">
+                        <small>¿No tienes cuenta? <a href="#">Regístrate aquí</a></small>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6 class="card-title">Usuarios de Prueba</h6>
+                <p class="card-text small text-muted">
+                    <strong>Administrador:</strong><br>
+                    Email: admin@itinerar.com<br>
+                    Contraseña: password123<br><br>
+                    
+                    <strong>Planificador:</strong><br>
+                    Email: planificador@itinerar.com<br>
+                    Contraseña: password123<br><br>
+                    
+                    <strong>Visitante:</strong><br>
+                    Email: visitante@itinerar.com<br>
+                    Contraseña: password123
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    const toggleIcon = document.getElementById('toggleIcon');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('bi-eye');
+        toggleIcon.classList.add('bi-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('bi-eye-slash');
+        toggleIcon.classList.add('bi-eye');
+    }
+}
+</script>
+{% endblock %}
+
+
+

@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Lugares de Interés - Mi Hoja de Ruta{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="display-5">Lugares de Interés</h1>
+        <p class="lead text-muted">Descubre parques nacionales, alojamientos y eventos en Argentina</p>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form id="filtroForm" onsubmit="filtrarLugares(event)">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="filtroProvincia" class="form-label">Provincia</label>
+                            <select class="form-select" id="filtroProvincia" name="provincia">
+                                <option value="">Todas las provincias</option>
+                                {% for provincia in provincias %}
+                                    <option value="{{ provincia.idProvincia }}">{{ provincia.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="filtroCategoria" class="form-label">Categoría</label>
+                            <select class="form-select" id="filtroCategoria" name="categoria">
+                                <option value="">Todas las categorías</option>
+                                {% for categoria in categorias %}
+                                    <option value="{{ categoria }}">{{ categoria }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="filtroNombre" class="form-label">Buscar por nombre</label>
+                            <input type="text" class="form-control" id="filtroNombre" name="nombre" 
+                                   placeholder="Ej: Parque Nacional...">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-search"></i> Buscar
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="limpiarFiltros()">
+                                <i class="bi bi-x-circle"></i> Limpiar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Resultados -->
+<div class="row" id="resultadosLugares">
+    {% if lugares %}
+        {% for lugar in lugares %}
+        <div class="col-md-6 col-lg-4 mb-4 lugar-item" 
+             data-provincia="{{ lugar.idProvincia or '' }}"
+             data-categoria="{{ lugar.categoria }}"
+             data-nombre="{{ lugar.nombre|lower }}">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title">{{ lugar.nombre }}</h5>
+                        <span class="badge bg-primary">{{ lugar.categoria }}</span>
+                    </div>
+                    
+                    {% if lugar.provincia %}
+                        <p class="card-text mb-1">
+                            <i class="bi bi-geo-alt"></i> 
+                            <strong>Provincia:</strong> {{ lugar.provincia.nombre }}
+                        </p>
+                    {% endif %}
+                    
+                    {% if lugar.ciudad %}
+                        <p class="card-text mb-1">
+                            <i class="bi bi-geo-alt-fill"></i> 
+                            <strong>Ciudad:</strong> {{ lugar.ciudad.nombre }}
+                        </p>
+                    {% endif %}
+                    
+                    {% if lugar.fuente %}
+                        <p class="card-text mb-2">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle"></i> Fuente: {{ lugar.fuente }}
+                            </small>
+                        </p>
+                    {% endif %}
+                    
+                    {% if lugar.enlaceFicha %}
+                        <a href="{{ lugar.enlaceFicha }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-box-arrow-up-right"></i> Ver más información
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> No hay lugares de interés disponibles.
+                <br>
+                <small>Ejecuta <code>python cargar_lugares.py</code> para cargar lugares desde los archivos CSV.</small>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<div class="row mt-4" id="sinResultados" style="display: none;">
+    <div class="col-12">
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle"></i> No se encontraron lugares que coincidan con los filtros seleccionados.
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function filtrarLugares(event) {
+    event.preventDefault();
+    
+    const provincia = document.getElementById('filtroProvincia').value;
+    const categoria = document.getElementById('filtroCategoria').value;
+    const nombre = document.getElementById('filtroNombre').value.toLowerCase();
+    
+    const lugares = document.querySelectorAll('.lugar-item');
+    let visibleCount = 0;
+    
+    lugares.forEach(lugar => {
+        const lugarProvincia = lugar.getAttribute('data-provincia');
+        const lugarCategoria = lugar.getAttribute('data-categoria');
+        const lugarNombre = lugar.getAttribute('data-nombre');
+        
+        let mostrar = true;
+        
+        if (provincia && lugarProvincia !== provincia) {
+            mostrar = false;
+        }
+        
+        if (categoria && lugarCategoria !== categoria) {
+            mostrar = false;
+        }
+        
+        if (nombre && !lugarNombre.includes(nombre)) {
+            mostrar = false;
+        }
+        
+        if (mostrar) {
+            lugar.style.display = 'block';
+            visibleCount++;
+        } else {
+            lugar.style.display = 'none';
+        }
+    });
+    
+    // Mostrar mensaje si no hay resultados
+    const sinResultados = document.getElementById('sinResultados');
+    if (visibleCount === 0) {
+        sinResultados.style.display = 'block';
+    } else {
+        sinResultados.style.display = 'none';
+    }
+}
+
+function limpiarFiltros() {
+    document.getElementById('filtroProvincia').value = '';
+    document.getElementById('filtroCategoria').value = '';
+    document.getElementById('filtroNombre').value = '';
+    
+    // Mostrar todos los lugares
+    document.querySelectorAll('.lugar-item').forEach(lugar => {
+        lugar.style.display = 'block';
+    });
+    
+    document.getElementById('sinResultados').style.display = 'none';
+}
+</script>
+{% endblock %}
+
+
+
