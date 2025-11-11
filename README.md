@@ -13,9 +13,9 @@ Un sitio web donde los usuarios pueden crear y gestionar sus propios itinerarios
 
 ## Tipos de Usuarios
 
-- **Administrador**: Acceso completo (crear, editar, borrar, ver todo)
-- **Planificador**: Puede crear y gestionar sus propios itinerarios y etapas
-- **Visitante**: Solo puede ver itinerarios públicos y panel con gráficos informativos
+- **Administrador**: Acceso completo (crear, editar, borrar, ver todo).
+- **Planificador**: Puede crear y gestionar sus propios itinerarios y etapas.
+- **Visitante**: Solo puede ver itinerarios públicos y panel con gráficos informativos.
 
 ## Tecnologías Utilizadas
 
@@ -96,13 +96,15 @@ export FLASK_ENV=development
 flask run
 ```
 
+La aplicación estará disponible en: `http://localhost:5001`
+
 O especificando el puerto:
 
 ```bash
 flask run --port 8000 --debug
 ```
 
-La aplicación estará disponible en: `http://localhost:5001`
+La aplicación estará disponible en: `http://localhost:8000`
 
 ## Modelo de Datos
 
