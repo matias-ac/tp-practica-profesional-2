@@ -3,13 +3,14 @@ Script para inicializar la base de datos y crear usuarios de prueba
 """
 from app import create_app, db
 from app.models import Usuario, Rol, Itinerario, Etapa, Ciudad, Provincia, Aeropuerto, ParqueNacional, LugarInteres
+import os
 
 def init_database():
     """Inicializa la base de datos y crea datos de prueba"""
     app = create_app()
     
     with app.app_context():
-        # Eliminar todas las tablas existentes (¡CUIDADO en producción!)
+        # Eliminar todas las tablas existentes (IMPORTANTE: ¡CUIDADO en producción!)
         print("Eliminando tablas existentes...")
         db.drop_all()
         
@@ -59,9 +60,9 @@ def init_database():
             )
         ]
         
-        # Establecer contraseñas (por defecto: 'password123')
+        # Establecer contraseñas (por defecto usa DEFAULT_PASSWORD definida en el archivo .env)
         for usuario in usuarios:
-            usuario.set_password('password123')
+            usuario.set_password(os.getenv('DEFAULT_PASSWORD'))
             db.session.add(usuario)
         db.session.commit()
         
@@ -119,9 +120,9 @@ def init_database():
         print("Base de datos inicializada correctamente!")
         print("="*50)
         print("\nUsuarios de prueba creados:")
-        print("  - Admin: admin@itinerar.com / password123")
-        print("  - Planificador: planificador@itinerar.com / password123")
-        print("  - Visitante: visitante@itinerar.com / password123")
+        print("  - Admin: admin@itinerar.com / " + os.getenv('DEFAULT_PASSWORD'))
+        print("  - Planificador: planificador@itinerar.com / " + os.getenv('DEFAULT_PASSWORD'))
+        print("  - Visitante: visitante@itinerar.com / " + os.getenv('DEFAULT_PASSWORD'))
         print("\n" + "="*50)
 
 if __name__ == '__main__':

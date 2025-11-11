@@ -76,9 +76,9 @@ Este script:
 - Crea todas las tablas en la base de datos
 - Crea los roles (Administrador, Planificador, Visitante)
 - Crea usuarios de prueba:
-  - **Admin**: `admin@itinerar.com` / `password123`
-  - **Planificador**: `planificador@itinerar.com` / `password123`
-  - **Visitante**: `visitante@itinerar.com` / `password123`
+  - **Admin**: `admin@itinerar.com` / definir el valor de `DEFAULT_PASSWORD` en el archivo `.env`
+  - **Planificador**: `planificador@itinerar.com` / definir el valor de `DEFAULT_PASSWORD` en el archivo `.env`
+  - **Visitante**: `visitante@itinerar.com` / definir el valor de `DEFAULT_PASSWORD` en el archivo `.env`
 - Crea algunas provincias y ciudades de ejemplo
 - Crea un itinerario de ejemplo
 
