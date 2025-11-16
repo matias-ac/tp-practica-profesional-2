@@ -74,19 +74,23 @@ def crear(itinerario_id):
         fecha_fin = request.form.get('fechaFin', '').strip()
         nota_personal = request.form.get('notaPersonal', '').strip()
 
+        # --- Validación de campos ---
+        errores = []
         if not actividad_dia:
-            flash('La actividad del día es obligatoria', 'error')
-            return render_template('etapas/formulario.html',
-                                   modo='crear',
-                                   itinerario=itinerario,
-                                   etapa=None,
-                                   provincias=provincias,
-                                   form=request.form)
+            errores.append('La actividad del día es obligatoria.')
+        elif len(actividad_dia) < 5:
+            errores.append('La actividad del día debe tener al menos 5 caracteres.')
 
+        if not fecha_inicio:
+            errores.append('La fecha de inicio es obligatoria.')
+
+        # Se combina con la validación de formato y rango de fechas
         errores_fe = validate_etapa_dates(itinerario, fecha_inicio, fecha_fin)
-        if errores_fe:
-            for e in errores_fe:
-                flash(e, 'error')
+        errores.extend(errores_fe)
+
+        if errores:
+            for error in errores:
+                flash(error, 'error')
             return render_template('etapas/formulario.html',
                                    modo='crear',
                                    itinerario=itinerario,
