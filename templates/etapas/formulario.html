@@ -17,10 +17,12 @@
                     <p class="text-muted">
                         <i class="bi bi-info-circle"></i> 
                         Itinerario: <strong>{{ itinerario.titulo }}</strong>
+                        <br>
+                        <small>Duración: {{ itinerario.fechaInicio | format_date }} a {{ itinerario.fechaFin | format_date }}</small>
                     </p>
                 </div>
                 
-                <form method="POST">
+                <form method="POST" id="formularioEtapa" onsubmit="validarFormulario(event)">
                     <div class="mb-3">
                         <label for="actividadDelDia" class="form-label">
                             Actividad del Día <span class="text-danger">*</span>
@@ -74,14 +76,24 @@
                         <div class="col-md-6 mb-3">
                             <label for="fechaInicio" class="form-label">Fecha de Inicio</label>
                             <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" 
-                                   value="{% if etapa and etapa.fechaInicio %}{{ etapa.fechaInicio }}{% endif %}">
+                                   min="{{ itinerario.fechaInicio }}" 
+                                   max="{{ itinerario.fechaFin }}"
+                                   value="{% if etapa and etapa.fechaInicio %}{{ etapa.fechaInicio }}{% endif %}"
+                                   onchange="validarFechas()">
                             <div class="form-text">Opcional: fecha de inicio de esta etapa</div>
+                            <small class="text-muted">Debe estar entre {{ itinerario.fechaInicio | format_date }} y {{ itinerario.fechaFin | format_date }}</small>
+                            <div id="errorFechaInicio" class="text-danger small mt-1" style="display:none;"></div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="fechaFin" class="form-label">Fecha de Fin</label>
                             <input type="date" class="form-control" id="fechaFin" name="fechaFin" 
-                                   value="{% if etapa and etapa.fechaFin %}{{ etapa.fechaFin }}{% endif %}">
+                                   min="{{ itinerario.fechaInicio }}" 
+                                   max="{{ itinerario.fechaFin }}"
+                                   value="{% if etapa and etapa.fechaFin %}{{ etapa.fechaFin }}{% endif %}"
+                                   onchange="validarFechas()">
                             <div class="form-text">Opcional: fecha de fin de esta etapa</div>
+                            <small class="text-muted">Debe estar entre {{ itinerario.fechaInicio | format_date }} y {{ itinerario.fechaFin | format_date }}</small>
+                            <div id="errorFechaFin" class="text-danger small mt-1" style="display:none;"></div>
                         </div>
                     </div>
                     
@@ -90,6 +102,12 @@
                         <textarea class="form-control" id="notaPersonal" name="notaPersonal" rows="3" 
                                   placeholder="Ej: Llevar protector solar y sombrero">{% if etapa %}{{ etapa.notaPersonal or '' }}{% endif %}</textarea>
                         <div class="form-text">Opcional: notas personales para esta etapa</div>
+                    </div>
+                    
+                    <!-- Contenedor para mensajes de error -->
+                    <div id="mensajesError" class="alert alert-danger alert-dismissible fade" role="alert" style="display:none;">
+                        <ul id="listaErrores" class="mb-0"></ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     
                     <div class="d-flex justify-content-between">
@@ -112,12 +130,21 @@
 // Datos de ciudades por provincia (se cargarán dinámicamente)
 const ciudadesPorProvincia = {
     {% for provincia in provincias %}
-    {{ provincia.idProvincia }}: [
+    "{{ provincia.idProvincia }}": [
         {% for ciudad in provincia.ciudades %}
-        {id: {{ ciudad.idCiudad }}, nombre: "{{ ciudad.nombre }}"}{% if not loop.last %},{% endif %}
+        {
+            id: {{ ciudad.idCiudad }},
+            nombre: "{{ ciudad.nombre }}"
+        }{% if not loop.last %},{% endif %}
         {% endfor %}
     ]{% if not loop.last %},{% endif %}
     {% endfor %}
+};
+
+// Fechas del itinerario para validación
+const fechasItinerario = {
+    inicio: "{{ itinerario.fechaInicio }}",
+    fin: "{{ itinerario.fechaFin }}"
 };
 
 function cargarCiudades() {
@@ -151,16 +178,106 @@ function cargarLugaresInteres() {
         fetch(`/lugares/api/por-provincia/${provinciaId}`)
             .then(response => response.json())
             .then(data => {
-                data.lugares.forEach(lugar => {
-                    const option = document.createElement('option');
-                    option.value = lugar.id;
-                    option.textContent = `${lugar.nombre} (${lugar.categoria})`;
-                    lugarSelect.appendChild(option);
-                });
+                if (data.lugares && Array.isArray(data.lugares)) {
+                    data.lugares.forEach(lugar => {
+                        const option = document.createElement('option');
+                        option.value = lugar.id;
+                        option.textContent = `${lugar.nombre} (${lugar.categoria})`;
+                        lugarSelect.appendChild(option);
+                    });
+                }
             })
             .catch(error => {
                 console.error('Error al cargar lugares de interés:', error);
             });
+    }
+}
+
+// Validar fechas en tiempo real
+function validarFechas() {
+    const fechaInicio = document.getElementById('fechaInicio').value;
+    const fechaFin = document.getElementById('fechaFin').value;
+    const errorInicio = document.getElementById('errorFechaInicio');
+    const errorFin = document.getElementById('errorFechaFin');
+    
+    let esValido = true;
+    
+    // Limpiar errores previos
+    errorInicio.style.display = 'none';
+    errorInicio.textContent = '';
+    errorFin.style.display = 'none';
+    errorFin.textContent = '';
+    
+    // Si ambas fechas están llenas
+    if (fechaInicio && fechaFin) {
+        if (fechaInicio > fechaFin) {
+            errorFin.textContent = '❌ La fecha de fin debe ser igual o posterior a la fecha de inicio';
+            errorFin.style.display = 'block';
+            esValido = false;
+        }
+    }
+    
+    // Validar que estén dentro del rango del itinerario
+    if (fechaInicio && fechaInicio < fechasItinerario.inicio) {
+        errorInicio.textContent = `❌ No puede ser anterior a ${fechasItinerario.inicio}`;
+        errorInicio.style.display = 'block';
+        esValido = false;
+    }
+    
+    if (fechaInicio && fechaInicio > fechasItinerario.fin) {
+        errorInicio.textContent = `❌ No puede ser posterior a ${fechasItinerario.fin}`;
+        errorInicio.style.display = 'block';
+        esValido = false;
+    }
+    
+    if (fechaFin && fechaFin < fechasItinerario.inicio) {
+        errorFin.textContent = `❌ No puede ser anterior a ${fechasItinerario.inicio}`;
+        errorFin.style.display = 'block';
+        esValido = false;
+    }
+    
+    if (fechaFin && fechaFin > fechasItinerario.fin) {
+        errorFin.textContent = `❌ No puede ser posterior a ${fechasItinerario.fin}`;
+        errorFin.style.display = 'block';
+        esValido = false;
+    }
+    
+    return esValido;
+}
+
+// Validación al enviar el formulario
+function validarFormulario(event) {
+    const mensajesError = document.getElementById('mensajesError');
+    const listaErrores = document.getElementById('listaErrores');
+    
+    // Limpiar errores previos
+    listaErrores.innerHTML = '';
+    mensajesError.style.display = 'none';
+    
+    const errores = [];
+    
+    // Validar actividad del día
+    const actividad = document.getElementById('actividadDelDia').value.trim();
+    if (!actividad) {
+        errores.push('La actividad del día es obligatoria');
+    }
+    
+    // Validar fechas
+    if (!validarFechas()) {
+        errores.push('Por favor, verifica los rangos de fechas');
+    }
+    
+    // Mostrar errores si los hay
+    if (errores.length > 0) {
+        event.preventDefault();
+        errores.forEach(error => {
+            const li = document.createElement('li');
+            li.textContent = error;
+            listaErrores.appendChild(li);
+        });
+        mensajesError.classList.add('show');
+        mensajesError.style.display = 'block';
+        window.scrollTo(0, 0); // Scroll al inicio para ver errores
     }
 }
 
@@ -186,8 +303,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 200);
         {% endif %}
     }
+    
+    // Validar fechas al cargar en modo edición
+    validarFechas();
 });
 {% endif %}
 </script>
 {% endblock %}
-
