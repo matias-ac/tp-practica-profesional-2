@@ -51,12 +51,6 @@ class Usuario(db.Model, UserMixin):
         """Verifica si el usuario es planificador"""
         return self.rol.titulo == 'Planificador' or self.es_administrador()
     
-    def es_visitante(self):
-        """Verifica si el usuario es visitante"""
-        return self.rol.titulo == 'Visitante'
-    
     def __repr__(self):
         return f'<Usuario {self.email}>'
-
-
 

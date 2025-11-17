@@ -81,10 +81,10 @@ def register():
             flash('El correo electrónico ya está registrado. Por favor, inicia sesión.', 'error')
             return redirect(url_for('auth.login'))
 
-        # Asignar rol por defecto "Visitante"
-        rol_visitante = Rol.query.filter_by(titulo='Visitante').first()
-        if not rol_visitante:
-            flash('Error interno: No se encontró el rol de visitante. Contacta al administrador.', 'danger')
+        # Asignar rol por defecto "Planificador"
+        rol_planificador = Rol.query.filter_by(titulo='Planificador').first()
+        if not rol_planificador:
+            flash('Error interno: No se encontró el rol de planificador. Contacta al administrador.', 'danger')
             return render_template('auth/register.html', form=request.form)
 
         # Crear nuevo usuario
@@ -92,7 +92,7 @@ def register():
             email=email,
             nombre=nombre,
             apellido=apellido,
-            idRol=rol_visitante.idRol
+            idRol=rol_planificador.idRol
         )
         nuevo_usuario.set_password(password)
 

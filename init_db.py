@@ -23,7 +23,6 @@ def init_database():
         roles = [
             Rol(titulo='Administrador'),
             Rol(titulo='Planificador'),
-            Rol(titulo='Visitante')
         ]
         for rol in roles:
             db.session.add(rol)
@@ -32,7 +31,6 @@ def init_database():
         # Obtener los roles creados
         rol_admin = Rol.query.filter_by(titulo='Administrador').first()
         rol_planificador = Rol.query.filter_by(titulo='Planificador').first()
-        rol_visitante = Rol.query.filter_by(titulo='Visitante').first()
         
         # Crear usuarios de prueba
         print("Creando usuarios de prueba...")
@@ -50,13 +48,6 @@ def init_database():
                 apellido='Planificador',
                 email='planificador@itinerar.com',
                 fechaNacimiento='1992-05-15'
-            ),
-            Usuario(
-                idRol=rol_visitante.idRol,
-                nombre='María',
-                apellido='Visitante',
-                email='visitante@itinerar.com',
-                fechaNacimiento='1995-08-20'
             )
         ]
         
@@ -123,7 +114,6 @@ def init_database():
         print("\nUsuarios de prueba creados:")
         print("  - Admin: admin@itinerar.com / " + os.getenv('DEFAULT_PASSWORD'))
         print("  - Planificador: planificador@itinerar.com / " + os.getenv('DEFAULT_PASSWORD'))
-        print("  - Visitante: visitante@itinerar.com / " + os.getenv('DEFAULT_PASSWORD'))
         print("\n" + "="*50)
 
 if __name__ == '__main__':
