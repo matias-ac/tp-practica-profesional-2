@@ -1,12 +1,41 @@
 nombre,provincia,ciudad,fuente,id,enlace
 Hotel Alvear Palace,Buenos Aires,Buenos Aires,datos.gob.ar,1,https://www.alvearpalace.com
 Sheraton Buenos Aires Hotel & Convention Center,Buenos Aires,Buenos Aires,datos.gob.ar,2,https://www.marriott.com
-Hotel Patios de Cafayate,Salta,Cafayate,datos.gob.ar,3,https://www.patiosdecafayate.com
-Llao Llao Hotel & Resort,Río Negro,San Carlos de Bariloche,datos.gob.ar,4,https://www.llaollao.com
-Design Suites Bariloche,Río Negro,San Carlos de Bariloche,datos.gob.ar,5,https://www.designsuites.com
-Hotel Los Acebos,Neuquén,San Martín de los Andes,datos.gob.ar,6,https://www.losacebos.com
-Cavas Wine Lodge,Mendoza,Luján de Cuyo,datos.gob.ar,7,https://www.cavaswinelodge.com
-Park Hyatt Mendoza,Mendoza,Mendoza,datos.gob.ar,8,https://www.hyatt.com
-
-
-
+Hotel Provincial,Buenos Aires,Mar del Plata,datos.gob.ar,3,https://www.gba.gob.ar
+Hotel Libertador,Buenos Aires,La Plata,datos.gob.ar,4,https://www.hotellibertadorlaplata.com
+Hotel Howard Johnson Tandil,Buenos Aires,Tandil,datos.gob.ar,5,https://www.hjhotels.com
+Hotel Patios de Cafayate,Salta,Cafayate,datos.gob.ar,6,https://www.patiosdecafayate.com
+Hotel Alejandro I,Salta,Salta,datos.gob.ar,7,https://www.alejandro1.com
+Las Moras Hotel,Salta,San Lorenzo,datos.gob.ar,8,https://www.lasmorashotel.com
+Llao Llao Hotel & Resort,Río Negro,San Carlos de Bariloche,datos.gob.ar,9,https://www.llaollao.com
+Design Suites Bariloche,Río Negro,San Carlos de Bariloche,datos.gob.ar,10,https://www.designsuites.com
+Hotel Panamericano Bariloche,Río Negro,San Carlos de Bariloche,datos.gob.ar,11,https://www.panamericano.com
+Aqua Hotel,Río Negro,General Roca,datos.gob.ar,12,https://www.aquahotel.com
+Hotel Los Acebos,Neuquén,San Martín de los Andes,datos.gob.ar,13,https://www.losacebos.com
+Le Village Hotel,Neuquén,San Martín de los Andes,datos.gob.ar,14,https://www.levillage.com
+Hostería La Angostura,Neuquén,Villa La Angostura,datos.gob.ar,15,https://www.laangosturahotel.com
+Cavas Wine Lodge,Mendoza,Luján de Cuyo,datos.gob.ar,16,https://www.cavaswinelodge.com
+Park Hyatt Mendoza,Mendoza,Mendoza,datos.gob.ar,17,https://www.hyatt.com
+Diplomatic Hotel,Mendoza,Mendoza,datos.gob.ar,18,https://www.diplomatichotel.com
+Alpasión Lodge,Mendoza,Tunuyán,datos.gob.ar,19,https://www.alpasion.com
+Hotel Amerian,Córdoba,Córdoba,datos.gob.ar,20,https://www.amerian.com
+NH Panorama,Córdoba,Córdoba,datos.gob.ar,21,https://www.nh-hotels.com
+Hotel Portal del Lago,Córdoba,Villa Carlos Paz,datos.gob.ar,22,https://www.portaldellago.com
+Hotel Liberta,Córdoba,Río Cuarto,datos.gob.ar,23,https://www.hotelliberta.com
+Hotel Continental,Santa Fe,Santa Fe,datos.gob.ar,24,https://www.hotelcontinental.com
+Holiday Inn Rosario,Santa Fe,Rosario,datos.gob.ar,25,https://www.ihg.com
+Plaza Real Suites Hotel,Santa Fe,Rosario,datos.gob.ar,26,https://www.plazarealhotel.com
+Hotel Punta Marcos,Santa Fe,Reconquista,datos.gob.ar,27,https://www.puntamarcos.com
+Hotel Rayentray,Chubut,Puerto Madryn,datos.gob.ar,28,https://www.rayentray.com
+Dazzler Puerto Madryn,Chubut,Puerto Madryn,datos.gob.ar,29,https://www.wyndhamhotels.com
+Hotel Austral,Chubut,Comodoro Rivadavia,datos.gob.ar,30,https://www.hotelaustralcr.com
+Hotel Panamericano Misiones,Misiones,Posadas,datos.gob.ar,31,https://www.panamericanomisiones.com
+Hotel Saint George,Misiones,Puerto Iguazú,datos.gob.ar,32,https://www.hotelsaintgeorge.com
+Falls Iguazú Hotel & Spa,Misiones,Puerto Iguazú,datos.gob.ar,33,https://www.fallsiguazu.com
+Hotel Altos Ushuaia,Tierra del Fuego,Ushuaia,datos.gob.ar,34,https://www.altosushuaia.com
+Arakur Ushuaia Resort & Spa,Tierra del Fuego,Ushuaia,datos.gob.ar,35,https://www.arakur.com
+Hotel Grande,Tierra del Fuego,Río Grande,datos.gob.ar,36,https://www.hotelgrande.com
+Hotel Solar del Valle,San Juan,San Juan,datos.gob.ar,37,https://www.solardelvalle.com
+Hotel Viñas del Sol,San Juan,Chimbas,datos.gob.ar,38,https://www.vinasdelsol.com
+Hotel Plaza,Santiago del Estero,Santiago del Estero,datos.gob.ar,39,https://www.plazahotelsde.com
+Amérian Termas de Río Hondo,Santiago del Estero,Termas de Río Hondo,datos.gob.ar,40,https://www.amerian.com
