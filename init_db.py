@@ -3,6 +3,7 @@ Script para inicializar la base de datos y crear usuarios de prueba
 """
 from app import create_app, db
 from app.models import Usuario, Rol, Itinerario, Etapa, Ciudad, Provincia, Aeropuerto, ParqueNacional, LugarInteres
+from data.provincias import provincias_data
 import os
 
 def init_database():
@@ -59,13 +60,6 @@ def init_database():
         
         # Crear algunas provincias y ciudades de ejemplo
         print("Creando provincias y ciudades de ejemplo...")
-        provincias_data = [
-            {'nombre': 'Buenos Aires', 'ciudades': ['Buenos Aires', 'La Plata', 'Mar del Plata']},
-            {'nombre': 'Córdoba', 'ciudades': ['Córdoba', 'Villa Carlos Paz', 'La Falda']},
-            {'nombre': 'Salta', 'ciudades': ['Salta', 'Cafayate', 'San Salvador de Jujuy']},
-            {'nombre': 'Mendoza', 'ciudades': ['Mendoza', 'San Rafael', 'Malargüe']},
-            {'nombre': 'Santa Cruz', 'ciudades': ['El Calafate', 'Río Gallegos', 'El Chaltén']}
-        ]
         
         for prov_data in provincias_data:
             provincia = Provincia(nombre=prov_data['nombre'])
