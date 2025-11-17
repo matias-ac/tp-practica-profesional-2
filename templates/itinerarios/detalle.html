@@ -27,11 +27,11 @@
                     <i class="bi bi-calendar"></i> 
                     <strong>Fechas:</strong>
                     {% if itinerario.fechaInicio and itinerario.fechaFin %}
-                        {{ itinerario.fechaInicio }} - {{ itinerario.fechaFin }}
+                        {{ itinerario.fechaInicio | format_date }} - {{ itinerario.fechaFin | format_date }}
                     {% elif itinerario.fechaInicio %}
-                        Desde: {{ itinerario.fechaInicio }}
+                        Desde: {{ itinerario.fechaInicio | format_date }}
                     {% elif itinerario.fechaFin %}
-                        Hasta: {{ itinerario.fechaFin }}
+                        Hasta: {{ itinerario.fechaFin | format_date }}
                     {% endif %}
                 </p>
             {% endif %}
@@ -86,7 +86,7 @@
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <h5 class="mb-1">
                                     {% if etapa.fechaInicio %}
-                                        <i class="bi bi-calendar-event"></i> {{ etapa.fechaInicio }}
+                                        <i class="bi bi-calendar-event"></i> {{ etapa.fechaInicio | format_date }}
                                     {% else %}
                                         <i class="bi bi-list-ol"></i> Etapa {{ loop.index }}
                                     {% endif %}
@@ -104,7 +104,7 @@
                                     {% endif %}
                                     {% if etapa.fechaFin %}
                                         <span class="badge bg-secondary">
-                                            <i class="bi bi-calendar-check"></i> Hasta: {{ etapa.fechaFin }}
+                                            <i class="bi bi-calendar-check"></i> Hasta: {{ etapa.fechaFin | format_date }}
                                         </span>
                                     {% endif %}
                                 </div>

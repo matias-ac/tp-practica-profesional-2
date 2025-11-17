@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Mi Perfil - ItinerAR{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="bi bi-person-circle"></i> Mi Perfil</h2>
+
+    <div class="row">
+        <!-- Columna de Información y Edición -->
+        <div class="col-lg-8">
+            <!-- Formulario de Datos Personales -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Datos Personales</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('auth.perfil') }}">
+                        <input type="hidden" name="form_name" value="update_profile">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{ current_user.nombre }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="apellido" class="form-label">Apellido</label>
+                                <input type="text" class="form-control" id="apellido" name="apellido" value="{{ current_user.apellido or '' }}">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ current_user.email }}" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Guardar Cambios
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Formulario de Cambio de Contraseña -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Cambiar Contraseña</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('auth.perfil') }}">
+                        <input type="hidden" name="form_name" value="change_password">
+                        <div class="mb-3">
+                            <label for="current_password" class="form-label">Contraseña Actual</label>
+                            <input type="password" class="form-control" id="current_password" name="current_password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="new_password" class="form-label">Nueva Contraseña</label>
+                            <input type="password" class="form-control" id="new_password" name="new_password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirm_new_password" class="form-label">Confirmar Nueva Contraseña</label>
+                            <input type="password" class="form-control" id="confirm_new_password" name="confirm_new_password" required>
+                        </div>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="bi bi-key"></i> Cambiar Contraseña
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna de Itinerarios Personales -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Mis Itinerarios</h5>
+                </div>
+                <div class="card-body">
+                    {% if current_user.itinerarios %}
+                        <ul class="list-group list-group-flush">
+                            {% for itinerario in current_user.itinerarios %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <a href="{{ url_for('itinerarios.detalle', id=itinerario.idItinerario) }}">{{ itinerario.titulo }}</a>
+                                    <span class="badge bg-info rounded-pill">{{ itinerario.etapas|length }} etapas</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">Aún no has creado ningún itinerario.</p>
+                        <a href="{{ url_for('itinerarios.crear') }}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-plus-lg"></i> Crear mi primer itinerario
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

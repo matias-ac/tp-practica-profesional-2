@@ -60,10 +60,31 @@ def crear():
         fecha_inicio = request.form.get('fechaInicio', '').strip()
         fecha_fin = request.form.get('fechaFin', '').strip()
         
-        # Validación básica
+        # Validación de campos
+        errores = []
         if not titulo:
-            flash('El título es obligatorio', 'error')
-            return render_template('itinerarios/formulario.html', modo='crear')
+            errores.append('El título es obligatorio.')
+        elif len(titulo) < 3 or len(titulo) > 100:
+            errores.append('El título debe tener entre 3 y 100 caracteres.')
+
+        if not descripcion:
+            errores.append('La descripción es obligatoria.')
+        elif len(descripcion) < 10 or len(descripcion) > 500:
+            errores.append('La descripción debe tener entre 10 y 500 caracteres.')
+
+        if not fecha_inicio:
+            errores.append('La fecha de inicio es obligatoria.')
+        
+        if not fecha_fin:
+            errores.append('La fecha de fin es obligatoria.')
+
+        if fecha_inicio and fecha_fin and fecha_inicio > fecha_fin:
+            errores.append('La fecha de inicio no puede ser posterior a la fecha de fin.')
+
+        if errores:
+            for error in errores:
+                flash(error, 'error')
+            return render_template('itinerarios/formulario.html', modo='crear', form=request.form)
         
         # Crear el itinerario
         nuevo_itinerario = Itinerario(

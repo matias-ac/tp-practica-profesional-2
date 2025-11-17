@@ -39,11 +39,11 @@
                                 <small class="text-muted">
                                     <i class="bi bi-calendar"></i>
                                     {% if itinerario.fechaInicio and itinerario.fechaFin %}
-                                        {{ itinerario.fechaInicio }} - {{ itinerario.fechaFin }}
+                                        {{ itinerario.fechaInicio | format_date }} - {{ itinerario.fechaFin | format_date }}
                                     {% elif itinerario.fechaInicio %}
-                                        Desde: {{ itinerario.fechaInicio }}
+                                        Desde: {{ itinerario.fechaInicio | format_date }}
                                     {% elif itinerario.fechaFin %}
-                                        Hasta: {{ itinerario.fechaFin }}
+                                        Hasta: {{ itinerario.fechaFin | format_date }}
                                     {% endif %}
                                 </small>
                             </p>

@@ -108,6 +108,7 @@ def init_database():
             etapa1 = Etapa(
                 idItinerario=itinerario.idItinerario,
                 idCiudad=ciudad_salta.idCiudad,
+                orden=1,
                 actividadDelDia='Llegada a Salta. Check-in en hotel y recorrido por el centro histórico.',
                 fechaInicio='2024-12-15',
                 notaPersonal='Llevar protector solar y sombrero'
@@ -127,4 +128,3 @@ def init_database():
 
 if __name__ == '__main__':
     init_database()
-

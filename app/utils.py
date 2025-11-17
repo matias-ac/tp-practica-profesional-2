@@ -29,3 +29,15 @@ def planificador_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def format_date(value, format='%d/%m/%Y'):
+    """Filtro para formatear fechas en plantillas Jinja2."""
+    if value is None:
+        return ""
+    try:
+        # Asumiendo que `value` es un string en formato 'YYYY-MM-DD'
+        from datetime import datetime
+        return datetime.strptime(str(value), '%Y-%m-%d').strftime(format)
+    except (ValueError, TypeError):
+        # Si falla la conversión, devolver el valor original
+        return value
+

@@ -14,7 +14,7 @@ class Itinerario(db.Model):
     fechaFin = db.Column(db.String(50), nullable=True)
     
     # Relación con Etapa
-    etapas = db.relationship('Etapa', backref='itinerario', lazy=True, cascade='all, delete-orphan', order_by='Etapa.fechaInicio')
+    etapas = db.relationship('Etapa', backref='itinerario', lazy=True, cascade='all, delete-orphan', order_by='Etapa.orden')
     
     def es_publico(self):
         """Verifica si el itinerario es público"""
@@ -30,6 +30,7 @@ class Etapa(db.Model):
     
     idEtapa = db.Column(db.Integer, primary_key=True)
     idItinerario = db.Column(db.Integer, db.ForeignKey('itinerario.idItinerario'), nullable=False)
+    orden = db.Column(db.Integer, nullable=True)
     idCiudad = db.Column(db.Integer, db.ForeignKey('ciudad.idCiudad'), nullable=True)
     idLugarInteres = db.Column(db.Integer, db.ForeignKey('lugar_interes.idLugarInteres'), nullable=True)
     actividadDelDia = db.Column(db.Text, nullable=False)
@@ -42,4 +43,3 @@ class Etapa(db.Model):
     
     def __repr__(self):
         return f'<Etapa {self.idEtapa} - {self.actividadDelDia[:30]}>'
-
